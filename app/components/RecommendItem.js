@@ -1,20 +1,28 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
 import  CustomButton from './CustomButton'
+import { useNavigation  } from '@react-navigation/native'
 
-const RecommendItem = ({data, type}) => {
+const RecommendItem = ({data, type }) => {
+
+    const navigation = useNavigation();
+
     let bg = data.bg ?? "#FDE598"
     let isProduct = type == 'product'
 
     let customSize = isProduct ? {height: 250, width: 175} : {height: 105, width: 250}
 
-    const handleClick = () =>{ console.log('click tag')}
     
+    const handleClick = () =>{ 
+        navigation.navigate("ProductDetails", {data});
+        console.log("click card")
+    }
     
-    const CustomTag = isProduct ? View : TouchableOpacity
+    const CustomTag = !isProduct ? View : TouchableOpacity
+
     
     return (
-        <CustomTag  onPress= {!isProduct && handleClick} style={isProduct? {...styles.productContainer,...customSize}: {...styles.container,...customSize, backgroundColor: bg}}>
+        <CustomTag  onPress= {isProduct && handleClick} style={isProduct? {...styles.productContainer,...customSize}: {...styles.container,...customSize, backgroundColor: bg}}>
             <View style={isProduct ? styles.imgProductContainer: styles.imgContainer}>
                 <Image style= {styles.image} source={data.src} />
             </View>
