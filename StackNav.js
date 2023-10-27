@@ -9,11 +9,31 @@ import MainContainer from './MainContainer'
 const Stack = createStackNavigator()
 
 const StackNav = () => {
+
+  const navStyle = {
+    headerTransparent: true,
+    headerStyle: {
+      height: 80,
+    }, 
+    headerTintColor: '#F3603F',
+    headerTitleStyle: {
+      fontWeight: 'bold',
+      color: "white",
+      fontSize: 12,
+      letterSpacing: 1
+    },
+
+  }
+
   return (
     <NavigationContainer>
         <Stack.Navigator >
-            <Stack.Screen name="MainContainer" component={MainContainer}  options={{headerShown: false}} />
-            <Stack.Screen name="ProductDetails" component={ProductDetails} />
+            <Stack.Screen name="MainContainer" component={MainContainer}  options={{headerShown: false, ...navStyle, title:"Home"}} />
+            <Stack.Screen name="ProductDetails" component={ProductDetails}  
+              options={{ 
+                title: '',  
+                ...navStyle
+                }}/>
         </Stack.Navigator>
     </NavigationContainer>
   )

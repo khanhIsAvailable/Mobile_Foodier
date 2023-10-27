@@ -4,7 +4,7 @@ import RecommendItem from './RecommendItem'
 
 const RecommendSlider = ({title, data, type="product"}) => {
   const seeallOnPressHandler = () =>{
-    console.log('see all')
+    
   }
   return (
     <View style={styles.container}>

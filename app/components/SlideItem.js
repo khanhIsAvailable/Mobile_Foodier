@@ -5,7 +5,7 @@ const {width} = Dimensions.get("screen")
 
 
 export default function SlideItem({dataImage}){
-    console.log(width)
+    
     const translateXImage = new Animated.Value(40);
     Animated.timing(translateXImage, {
         toValue: 0,

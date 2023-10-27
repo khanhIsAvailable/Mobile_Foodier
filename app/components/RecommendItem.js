@@ -15,7 +15,6 @@ const RecommendItem = ({data, type }) => {
     
     const handleClick = () =>{ 
         navigation.navigate("ProductDetails", {data});
-        console.log("click card")
     }
     
     const CustomTag = !isProduct ? View : TouchableOpacity
@@ -33,7 +32,7 @@ const RecommendItem = ({data, type }) => {
             {isProduct && 
                 <View style={styles.footer}>
                     <Text style={styles.price}>${data.price}</Text>
-                    <CustomButton type="square" text="+" onPressHandler = {()=>{console.log("click custom button")}} />
+                    <CustomButton type="square" text="+" onPressHandler = {()=>{}} />
                 </View>
             }
         </CustomTag>

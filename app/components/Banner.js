@@ -4,13 +4,11 @@ import SlideItem from "./SlideItem.js"
 import Pagination from "./Pagination.js"
 
 export default function Banner({images}){
-    console.log(images)
 
     // const [index, setIndex] = useState(0);
     const scrollX = useRef(new Animated.Value(0)).current;
 
 
-    // console.log("INDEX: ", index)
     
 
     const handleOnScroll = event => {

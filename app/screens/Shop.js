@@ -63,7 +63,6 @@ export default function Shop() {
   ]
 
   
-  console.log(images)
   return (
     <SafeAreaView>
       <ScrollView>

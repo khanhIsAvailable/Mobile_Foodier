@@ -5,6 +5,9 @@ import Shop from './app/screens/Shop'
 import WelcomeScreen from './app/screens/WelcomeScreen'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faCartShopping, faHeart, faList, faShop, faUser } from '@fortawesome/free-solid-svg-icons'
+import Cart from './app/screens/Cart'
+import Account from './app/screens/Account'
+import Explore from './app/screens/Explore'
 const Tab = createBottomTabNavigator()
 
 const TabItemName = {
@@ -28,7 +31,7 @@ const MainContainer = () => {
               activeTintColor: '#53B175',
               inactiveTintColor: '#181725',
               labelStyle: { paddingBottom: 5, fontSize: 10 },
-              style: { padding: 10, height: 70},
+              style: { height: 70, paddingTop: 20},
             }}
 
             screenOptions={({ route }) => ({
@@ -57,7 +60,9 @@ const MainContainer = () => {
         >
 
             <Tab.Screen name={TabItemName.Shop} component={Shop} />
-            <Tab.Screen name={TabItemName.Account} component={WelcomeScreen} />
+            <Tab.Screen name={TabItemName.Explore} component={Explore} />
+            <Tab.Screen name={TabItemName.Cart} component={Cart} />
+            <Tab.Screen name={TabItemName.Account} component={Account} />
         </Tab.Navigator>
   )
 }

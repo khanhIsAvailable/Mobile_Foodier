@@ -3,7 +3,7 @@ import React from 'react'
 
 export default function WelcomeScreen() {
 
-    const handlePress = () =>{ console.log("PRess"); }
+    const handlePress = () =>{  }
 
     return (
         <ImageBackground 
