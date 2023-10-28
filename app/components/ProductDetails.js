@@ -13,7 +13,6 @@ const ProductDetails = (props) => {
         { src: "https://3dbee.it/upload/bunch_of_apples_close-1.png"}
     ]
 
-    console.log(data)
 
 
     // const [index, setIndex] = useState(0);

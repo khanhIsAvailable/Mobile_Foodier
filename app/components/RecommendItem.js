@@ -2,28 +2,30 @@ import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
 import  CustomButton from './CustomButton'
 import { useNavigation  } from '@react-navigation/native'
+import groceries from '../assets/groceries'
 
 const RecommendItem = ({data, type }) => {
 
     const navigation = useNavigation();
 
-    let bg = data.bg ?? "#FDE598"
     let isProduct = type == 'product'
 
     let customSize = isProduct ? {height: 250, width: 175} : {height: 105, width: 250}
 
     
     const handleClick = () =>{ 
-        navigation.navigate("ProductDetails", {data});
+        if(isProduct){
+            navigation.navigate("ProductDetails", {data});
+        } else {
+            navigation.navigate("ListProducts", {groceryid: data.id});
+        }
     }
     
-    const CustomTag = !isProduct ? View : TouchableOpacity
-
     
     return (
-        <CustomTag  onPress= {isProduct && handleClick} style={isProduct? {...styles.productContainer,...customSize}: {...styles.container,...customSize, backgroundColor: bg}}>
+        <TouchableOpacity onPress= {handleClick} style={isProduct? {...styles.productContainer,...customSize}: {...styles.container,...customSize, backgroundColor: data.backgroundColor.replaceAll(" ", ""), borderColor: data.borderColor.replaceAll(" ", ""), borderWidth: 1 }}>
             <View style={isProduct ? styles.imgProductContainer: styles.imgContainer}>
-                <Image style= {styles.image} source={data.src} />
+                <Image style= {styles.image} source={type == "grocery" ? groceries[data.image] : data.src} />
             </View>
             <View style={ isProduct?styles.productContent:styles.content}>
                 <Text style={isProduct ? styles.name : {fontWeight: "bold", fontSize: 21, color: "#3E423F"}}>{data.name}</Text>
@@ -35,7 +37,7 @@ const RecommendItem = ({data, type }) => {
                     <CustomButton type="square" text="+" onPressHandler = {()=>{}} />
                 </View>
             }
-        </CustomTag>
+        </TouchableOpacity>
     )
 }
 

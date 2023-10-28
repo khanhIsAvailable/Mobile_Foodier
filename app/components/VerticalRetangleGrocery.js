@@ -3,16 +3,28 @@ import React from 'react'
 import { TouchableOpacity } from 'react-native'
 import { Image } from 'react-native'
 import { Dimensions } from 'react-native'
+import groceryImage from '../assets/groceries/'
+import { useNavigation } from '@react-navigation/native'
 
 export default function VerticalRetangleGrocery({data, width}) {
+    
     console.log(data)
+    const navigation = useNavigation();
+
+    const handleClick = () =>{ 
+        navigation.navigate("ListProducts", {groceryid: data.id});
+    }
+
+
+
+
     return (
-        <TouchableOpacity style={{backgroundColor: data.bg, width: (width-60)/2, marginVertical: 5, borderRadius: 18, borderWidth: 2, borderColor: "red" } }>
+        <TouchableOpacity onPress={handleClick} style={{backgroundColor: data.backgroundColor.replaceAll(" ",""), width: (width-60)/2, marginVertical: 5, borderRadius: 18, borderWidth: 2, borderColor: data.borderColor.replaceAll(" ","") } }>
             <View style={{display: "flex", height: 200,  flex: 1, flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
-                <Image source = {data.src} />
+                <Image source={groceryImage[data.image]} />
                 <View>
                     <Text>
-                        {data.name}
+                        {data.description}
                     </Text>
                 </View>
             </View>

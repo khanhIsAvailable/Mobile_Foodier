@@ -1,10 +1,11 @@
 import { StyleSheet, Text, View, ScrollView, SafeAreaView } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import ColorfulCarrot from '../components/ColorfulCarrot'
 import Location from  '../components/Location.js'
 import SearchBar from '../components/SearchBar'
 import Banner from '../components/Banner.js'
 import RecommendSlider from '../components/RecommendSlider'
+import api from '../api'
 
 export default function Shop() {
   var location = "Ha Noi, Viet Nam"
@@ -15,6 +16,8 @@ export default function Shop() {
         {id: 2, src: require("../assets/banners/banner-2.png")},
         {id: 3, src: require("../assets/banners/banner-3.png")},
     ];
+
+
   var productSlideData = [
     {
       id: 1,
@@ -41,28 +44,24 @@ export default function Shop() {
   ]
 
 
-  var groceries = [
-    {
-      id: 1,
-      name: "Pulse",
-      bg: "#F8A44C",
-      src: require("../assets/groceries/pulse.png")
-    },
-    {
-      id: 2,
-      name: "Rice",
-      bg: "#53B175",
-      src: require("../assets/groceries/rice.png")
-    },
-    {
-      id: 3,
-      name: "Pulse",
-      src: require("../assets/groceries/pulse.png")
-    },
-
-  ]
-
+  const [searchValue, setSearchValue] = useState("")
   
+  const [groceries, setGrocery] = useState([])
+
+
+  useEffect(function(){
+    fetch(api.getGrocery)
+            .then(response => response.json())
+            .then(responseJSON =>{
+                setGrocery(responseJSON);
+            })
+            .catch(error => {
+                console.log(error)
+            })
+  }, [])
+
+
+
   return (
     <SafeAreaView>
       <ScrollView>
@@ -73,7 +72,7 @@ export default function Shop() {
               <Location location = {location}/>
           </View>
 
-          <SearchBar placeholder = 'Search store, product,...'/>
+          <SearchBar searchValue={searchValue} setSearchValue={setSearchValue} placeholder = 'Search store, product,...'/>
 
           <Banner images = {  images } />
 

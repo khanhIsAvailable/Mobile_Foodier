@@ -5,6 +5,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import Shop from './app/screens/Shop'
 import ProductDetails from "./app/components/ProductDetails"
 import MainContainer from './MainContainer'
+import ListProducts from './app/components/ListProducts'
 
 const Stack = createStackNavigator()
 
@@ -28,12 +29,19 @@ const StackNav = () => {
   return (
     <NavigationContainer>
         <Stack.Navigator >
-            <Stack.Screen name="MainContainer" component={MainContainer}  options={{headerShown: false, ...navStyle, title:"Home"}} />
+            <Stack.Screen name="MainContainer" component={MainContainer}  options={{headerShown: false, ...navStyle, title:"Back"}} />
             <Stack.Screen name="ProductDetails" component={ProductDetails}  
               options={{ 
                 title: '',  
                 ...navStyle
                 }}/>
+            <Stack.Screen name="ListProducts" component={ListProducts}  
+              options={{ 
+                title: '',  
+                ...navStyle,
+                headerBackTitle: "Explore"
+                }}
+                />
         </Stack.Navigator>
     </NavigationContainer>
   )

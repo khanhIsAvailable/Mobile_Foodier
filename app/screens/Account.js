@@ -9,7 +9,6 @@ import { TouchableOpacity } from 'react-native'
 
 
 function AccountOptionItem({item}){
-    console.log(item)
     return(
         <TouchableOpacity style={{display: "flex",  flexDirection: 'row', paddingVertical: 20, paddingHorizontal: 30, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "#e7e7e7"}}>
             <View style={{ flex: 0.2 }}>
