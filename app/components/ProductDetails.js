@@ -1,19 +1,16 @@
 import { StyleSheet, Text, View, Image, FlatList, Animated, TouchableOpacity } from 'react-native'
-import React, {useRef} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import { ScrollView } from 'react-native-gesture-handler'
 import Pagination from './Pagination'
 import CustomButton from './CustomButton'
 import FooterButton from './FooterButton'
+import api from '../api'
 
 const ProductDetails = (props) => {
     const {data} = {...props.route.params}
+    var [productImage, setProductImage] = useState([])
 
-    const mocksrc=  [
-        { src: "https://3dbee.it/upload/bunch_of_apples_standard-1.png"},
-        { src: "https://3dbee.it/upload/bunch_of_apples_close-1.png"}
-    ]
-
-
+    console.log("Prd details: ", data)
 
     // const [index, setIndex] = useState(0);
     const scrollX = useRef(new Animated.Value(0)).current;
@@ -46,6 +43,17 @@ const ProductDetails = (props) => {
     }).current;
 
 
+    useEffect(function(){
+        console.log(data)
+        fetch(api.getProductImage + "?productid="+data.productID)
+                .then(response => response.json())
+                .then(responseJSON =>{
+                    setProductImage(responseJSON);
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+    },[])
 
     return (
         <View style={{backgroundColor: "white", flex: 1, flexDirection: 'column'}} contentContainerStyle={{flexGrow: 1, paddingBottom: 100}}>
@@ -53,8 +61,8 @@ const ProductDetails = (props) => {
                 <View>
                     <FlatList
                         style = {{backgroundColor: "#F2F3F2"}}
-                        data = {mocksrc} 
-                        renderItem={({item, id})=> (<Image source = {{uri: item.src}}  style={{width: 400, height: 400, resizeMode: 'contain'}} />)}
+                        data = {productImage} 
+                        renderItem={({item, id})=> (<Image source = {{uri: item.url}}  style={{width: 350, height: 350, resizeMode: 'contain'}} />)}
                         horizontal
                         pagingEnabled
                         snapToAlignment="center"
@@ -63,13 +71,13 @@ const ProductDetails = (props) => {
                         onViewableItemsChanged={handleOnViewableItemsChanged}
                         viewabilityConfig={viewabilityConfig}
                         />
-                    <Pagination data={mocksrc} scrollX={scrollX}  />
+                    <Pagination data={productImage} scrollX={scrollX}  />
                 </View>
 
                 <View style={styles.contentContainer}>
                     <View style = {styles.description}>
-                        <Text style = {{fontSize: 25, fontWeight: 'bold'}}>{data.name}</Text>
-                        <Text style =  {{color:  "#7C7C7C"}}>{data.unit}</Text>
+                        <Text style = {{fontSize: 25, fontWeight: 'bold'}}>{data.productName}</Text>
+                        <Text style =  {{color:  "#7C7C7C"}}>{data.unit}, Price</Text>
                     </View>
 
                     <View style={styles.buttoncontainer}>
@@ -83,14 +91,19 @@ const ProductDetails = (props) => {
                             <CustomButton type="addbutton" text="+" onPressHandler = {()=>{}} />
                         </View>
                         <View style={styles.price}>                    
-                            <Text style={{fontWeight: 'bold', fontSize: 20}}>${data.price}</Text>
+                            <Text style={{fontWeight: 'bold', fontSize: 20}}>${data.productPrice}</Text>
                         </View>
                     </View>
-
                     <View style={styles.productdetailsContainer}>
-                        <Text style={{fontSize: 16, fontWeight: 'bold', paddingBottom: 10, paddingTop: 5}}>Description: </Text>                
+                        <Text style={{fontSize: 16, fontWeight: 'bold', paddingBottom: 10, paddingTop: 5}} >Origin: </Text>                
                         <View style={styles.productDetails}>
-                            <Text style={{color: "#7C7C7C"}}>text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text  text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text </Text>
+                            <Text style={{color: "#7C7C7C"}}>{data.productOrigin}</Text>
+                        </View>
+                    </View>
+                    <View style={styles.productdetailsContainer}>
+                        <Text style={{fontSize: 16, fontWeight: 'bold', paddingBottom: 10, paddingTop: 5}} >Description: </Text>                
+                        <View style={styles.productDetails}>
+                            <Text style={{color: "#7C7C7C"}}>{data.productDescription}</Text>
                         </View>
                     </View>
                 </View>

@@ -6,8 +6,9 @@ import SearchBar from '../components/SearchBar'
 import Banner from '../components/Banner.js'
 import RecommendSlider from '../components/RecommendSlider'
 import api from '../api'
+import { useNavigation } from '@react-navigation/native'
 
-export default function Shop() {
+export default function Shop({navigation}) {
   var location = "Ha Noi, Viet Nam"
 
   var images = 
@@ -43,10 +44,16 @@ export default function Shop() {
 
   ]
 
-
-  const [searchValue, setSearchValue] = useState("")
-  
   const [groceries, setGrocery] = useState([])
+  const [exclusiveOffer, setExclusiveOffer] = useState([])
+  const [bestSelling, setBestSelling] = useState([])
+
+  // const navigation = useNavigation();
+
+  const submitHandler = (e) => {
+      console.log("submitHandler: ", e.nativeEvent.text)
+      navigation.navigate("ListProducts", {name: e.nativeEvent.text, groceryid : 1 })
+  }
 
 
   useEffect(function(){
@@ -58,9 +65,26 @@ export default function Shop() {
             .catch(error => {
                 console.log(error)
             })
+
+    fetch(api.getExclusiveOffer)
+            .then(response => response.json())
+            .then(responseJSON =>{
+                setExclusiveOffer(responseJSON);
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    fetch(api.getBestSelling)
+            .then(response => response.json())
+            .then(responseJSON =>{
+                setBestSelling(responseJSON);
+            })
+            .catch(error => {
+                console.log(error)
+            })
   }, [])
 
-
+  console.log(exclusiveOffer)
 
   return (
     <SafeAreaView>
@@ -72,13 +96,13 @@ export default function Shop() {
               <Location location = {location}/>
           </View>
 
-          <SearchBar searchValue={searchValue} setSearchValue={setSearchValue} placeholder = 'Search store, product,...'/>
+          <SearchBar submitHandler = {submitHandler} placeholder = 'Search store, product,...'/>
 
           <Banner images = {  images } />
 
           <View style={styles.productIntro}>  
-            <RecommendSlider data = {productSlideData} title = "Exclusive Offer" />
-            <RecommendSlider data = {productSlideData} title = "Best Selling" />
+            <RecommendSlider data = {exclusiveOffer} title = "Exclusive Offer" />
+            <RecommendSlider data = {bestSelling} title = "Best Selling" />
             <RecommendSlider data = {groceries} type='grocery' title = "Groceries" />
           </View>
 

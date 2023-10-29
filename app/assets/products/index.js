@@ -1,0 +1,31 @@
+var products = {
+    apple: require("./apple.png"),
+    banana: require("./banana.png"),
+    pepper: require("./pepper.png"),
+    ginger: require("./ginger.png"),
+    beefbone: require("./beefbone.png"),
+    broilerchicken: require("./broilerchicken.png"),
+    dietcoke: require("./dietcoke.png"),
+    spritecan: require("./spritecan.png"),
+    applegrapejuice: require("./applegrapejuice.png"),
+    orangejuice: require("./orangejuice.png"),
+    cocacolacan: require("./cocacolacan.png"),
+    pepsican: require("./pepsican.png"),
+    eggchickenred: require("./eggchickenred.png"),
+    eggchickenwhite: require("./eggchickenwhite.png"),
+    eggpasta: require("./eggpasta.png"),
+    eggnoodles: require("./eggnoodles.png"),
+    mayonnaiseggless: require("./mayonnaiseggless.png"),
+    eggnoodles2: require("./eggnoodles2.png"),
+    birthdaycake: require("./birthdaycake.png"),
+    banhmi: require("./banhmi.png"),
+    rawsoybeanoil: require("./rawsoybeanoil.png"),
+    tassietallowghee: require("./tassietallowghee.png"),
+    modhanighee: require("./modhanighee.png"),
+    beanstalks: require("./beanstalks.png"),
+    kibolentilchips: require("./kibolentilchips.png"),
+    butterscotchpopcorn: require("./butterscotchpopcorn.png"),
+}
+
+
+export default products

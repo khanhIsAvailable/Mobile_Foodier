@@ -3,32 +3,46 @@ import React, { useRef, useState } from 'react'
 import { faX } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { TouchableOpacity } from 'react-native-gesture-handler'
+import { useNavigation } from '@react-navigation/native'
 
-export default function SearchBar({searchValue, setSearchValue, style, placeholder}) {
+export default function SearchBar({style, placeholder, searchValue = "", setSearchValue, submitHandler = ()=>{}}) {
+
+
+    const [localSearchValue, setLocalSearchValue] = useState(searchValue)
 
 
     const searchInput = useRef()
 
     const handleOnChange = (text) => {
-        setSearchValue(text)
+        setLocalSearchValue(text)
     }
 
     const handleClickX = () =>{
-        setSearchValue("")
+        setLocalSearchValue("")
     }
-    console.log("searchValue: ", searchValue)
+
+    const submitEditingHandler = () =>{
+        console.log("localSearchValue: ", localSearchValue)
+    }
+
 
     return (
         <View style={{...styles.container, ...style}}>
             <Image style={styles.searchIcon} source={require("../assets/imgs/search-icon.png")}/>
             <TextInput 
                 ref={searchInput}
-                value={searchValue}
                 style={styles.searchBar}
+                value={localSearchValue}
                 placeholder={placeholder}
                 onChangeText={handleOnChange}
+                onSubmitEditing = {
+                    (e)=>{
+                        console.log()
+                        submitEditingHandler(); 
+                        submitHandler(e);
+                    }}
                 />
-            { searchValue != "" &&
+            { localSearchValue != ""  &&
                 <TouchableOpacity activeOpacity={0.8} onPress={handleClickX} style={{borderRadius: 10, width: 20, height: 20, backgroundColor: "#c7c7c7", display: 'flex', justifyContent: 'center', alignItems: "center"}}>
                     <FontAwesomeIcon icon={faX} color="white" size={12}  />
                 </TouchableOpacity>

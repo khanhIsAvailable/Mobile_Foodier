@@ -10,20 +10,24 @@ import api from '../api'
 
   
 
-export default function Grid({type}) {
-    var [groceries, setGrocery] = useState([]);
+export default function Grid({type, products = []}) {
+    var [data, setData] = useState([]);
     
     var Tag = type == 'product' ? RecommendItem : VerticalRetangleGrocery
     
     useEffect(function(){
-        fetch(api.getGrocery)
+        if(type != 'product')
+            fetch(api.getGrocery)
                 .then(response => response.json())
                 .then(responseJSON =>{
-                    setGrocery(responseJSON);
+                    setData(responseJSON);
                 })
                 .catch(error => {
                     console.log(error)
                 })
+        else {
+            setData(products)
+        }
     }, [])
 
 
@@ -33,9 +37,9 @@ export default function Grid({type}) {
         <View style={styles.container}>
             <ScrollView contentContainerStyle={{flexGrow: 1, display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between"}}>
             {
-                groceries.map((item,index)=>{
+                data.map((item,index)=>{
                     return (
-                        <Tag width={width} data={item} key={index} />
+                        <Tag width={width} data={item} type = {type} key={index} />
                     )
                 })
             }
@@ -52,6 +56,6 @@ const styles = StyleSheet.create({
         flexDirection:"row",
         flexWrap: "wrap",
         justifyContent: "space-between",
-        paddingHorizontal: 20
+        paddingHorizontal: 20,
     }
 })

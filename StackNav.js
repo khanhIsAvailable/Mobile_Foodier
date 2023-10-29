@@ -39,7 +39,6 @@ const StackNav = () => {
               options={{ 
                 title: '',  
                 ...navStyle,
-                headerBackTitle: "Explore"
                 }}
                 />
         </Stack.Navigator>

@@ -8,7 +8,6 @@ import { useNavigation } from '@react-navigation/native'
 
 export default function VerticalRetangleGrocery({data, width}) {
     
-    console.log(data)
     const navigation = useNavigation();
 
     const handleClick = () =>{ 
@@ -23,7 +22,7 @@ export default function VerticalRetangleGrocery({data, width}) {
             <View style={{display: "flex", height: 200,  flex: 1, flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
                 <Image source={groceryImage[data.image]} />
                 <View>
-                    <Text>
+                    <Text style={{fontWeight: "bold", paddingHorizontal: 10}}>
                         {data.description}
                     </Text>
                 </View>

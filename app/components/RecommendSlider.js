@@ -17,7 +17,7 @@ const RecommendSlider = ({title, data, type="product"}) => {
       <View>
         <FlatList
           data = {data} 
-          renderItem={({item, id})=> (<RecommendItem type= {type} data = {item} key = {id} />)}
+          renderItem={({item, id})=> (<RecommendItem type= {type} data = {item} key = {item.id} />)}
           horizontal
           pagingEnabled
           snapToAlignment="center"

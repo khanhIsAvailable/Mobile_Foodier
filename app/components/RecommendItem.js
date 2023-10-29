@@ -3,10 +3,13 @@ import React from 'react'
 import  CustomButton from './CustomButton'
 import { useNavigation  } from '@react-navigation/native'
 import groceries from '../assets/groceries'
+import products from "../assets/products"
 
 const RecommendItem = ({data, type }) => {
 
     const navigation = useNavigation();
+
+    console.log("recommend: ", data, type)
 
     let isProduct = type == 'product'
 
@@ -25,15 +28,15 @@ const RecommendItem = ({data, type }) => {
     return (
         <TouchableOpacity onPress= {handleClick} style={isProduct? {...styles.productContainer,...customSize}: {...styles.container,...customSize, backgroundColor: data.backgroundColor.replaceAll(" ", ""), borderColor: data.borderColor.replaceAll(" ", ""), borderWidth: 1 }}>
             <View style={isProduct ? styles.imgProductContainer: styles.imgContainer}>
-                <Image style= {styles.image} source={type == "grocery" ? groceries[data.image] : data.src} />
+                <Image  style= {styles.image} source={type == "grocery" ? groceries[data.image] : products[data.thumbnail]} />
             </View>
             <View style={ isProduct?styles.productContent:styles.content}>
-                <Text style={isProduct ? styles.name : {fontWeight: "bold", fontSize: 21, color: "#3E423F"}}>{data.name}</Text>
-                {isProduct &&<Text style={styles.unit}>{data.unit}</Text>}
+                <Text style={isProduct ? styles.name : {fontWeight: "bold", fontSize: 21, color: "#3E423F"}}>{data.productName || data.name}</Text>
+                {isProduct &&<Text style={styles.unit}>{data.unit}, Price</Text>}
             </View>
             {isProduct && 
                 <View style={styles.footer}>
-                    <Text style={styles.price}>${data.price}</Text>
+                    <Text style={styles.price}>${data.productPrice}</Text>
                     <CustomButton type="square" text="+" onPressHandler = {()=>{}} />
                 </View>
             }
@@ -63,10 +66,9 @@ const styles = StyleSheet.create({
         paddingRight: 16,
         marginRight: 20,
         display: 'flex',
-        flexDirection: 'row',
-        justifyContent: "flex-start",
-        alignItems: "center"
-        
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: "row"
     },
     imgProductContainer: {
         flex: 0.7,
@@ -78,6 +80,8 @@ const styles = StyleSheet.create({
         flex: 1
     },
     image: {
+        maxHeight: 100,
+        maxWidth: 100,
     },
     content: {
         width: '55%'
@@ -87,7 +91,7 @@ const styles = StyleSheet.create({
     },
     name: {
         fontWeight: "bold",
-        fontSize: 12
+        fontSize: 14
     },
     unit: {
         fontSize: 10,

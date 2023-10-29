@@ -4,7 +4,8 @@ var paths = {
     bevarages: require("./bevarages.png"),
     cookingoilghee: require("./cookingoilghee.png"),
     freshfoodvegetable: require("./freshfoodvegetable.png"),
-    meatfish: require("./meatfish.png")
+    meatfish: require("./meatfish.png"),
+    
     
 }
 
