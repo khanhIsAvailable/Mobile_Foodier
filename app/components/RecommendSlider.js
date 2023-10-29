@@ -1,10 +1,11 @@
 import { FlatList, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import React from 'react'
 import RecommendItem from './RecommendItem'
+import { useNavigation } from '@react-navigation/native'
 
-const RecommendSlider = ({title, data, type="product"}) => {
+const RecommendSlider = ({title, data, type="product", setProduct = ()=>{}}) => {
   const seeallOnPressHandler = () =>{
-    
+    var navigate = useNavigation();
   }
   return (
     <View style={styles.container}>
@@ -17,7 +18,7 @@ const RecommendSlider = ({title, data, type="product"}) => {
       <View>
         <FlatList
           data = {data} 
-          renderItem={({item, id})=> (<RecommendItem type= {type} data = {item} key = {item.id} />)}
+          renderItem={({item, id})=> (<RecommendItem setProduct={setProduct} style={{marginRight: 20}} type= {type} data = {item} key = {item.id} />)}
           horizontal
           pagingEnabled
           snapToAlignment="center"

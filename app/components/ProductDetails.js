@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, FlatList, Animated, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, Image, FlatList, Animated, TouchableOpacity, Dimensions } from 'react-native'
 import React, {useEffect, useRef, useState} from 'react'
 import { ScrollView } from 'react-native-gesture-handler'
 import Pagination from './Pagination'
@@ -9,8 +9,6 @@ import api from '../api'
 const ProductDetails = (props) => {
     const {data} = {...props.route.params}
     var [productImage, setProductImage] = useState([])
-
-    console.log("Prd details: ", data)
 
     // const [index, setIndex] = useState(0);
     const scrollX = useRef(new Animated.Value(0)).current;
@@ -44,7 +42,6 @@ const ProductDetails = (props) => {
 
 
     useEffect(function(){
-        console.log(data)
         fetch(api.getProductImage + "?productid="+data.productID)
                 .then(response => response.json())
                 .then(responseJSON =>{
@@ -55,6 +52,8 @@ const ProductDetails = (props) => {
                 })
     },[])
 
+    const {width} = Dimensions.get("screen")
+
     return (
         <View style={{backgroundColor: "white", flex: 1, flexDirection: 'column'}} contentContainerStyle={{flexGrow: 1, paddingBottom: 100}}>
             <ScrollView >
@@ -62,7 +61,7 @@ const ProductDetails = (props) => {
                     <FlatList
                         style = {{backgroundColor: "#F2F3F2"}}
                         data = {productImage} 
-                        renderItem={({item, id})=> (<Image source = {{uri: item.url}}  style={{width: 350, height: 350, resizeMode: 'contain'}} />)}
+                        renderItem={({item, id})=> (<Image source = {{uri: item.url}}  style={{width, height: 350, resizeMode: 'contain'}} />)}
                         horizontal
                         pagingEnabled
                         snapToAlignment="center"

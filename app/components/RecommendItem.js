@@ -4,16 +4,17 @@ import  CustomButton from './CustomButton'
 import { useNavigation  } from '@react-navigation/native'
 import groceries from '../assets/groceries'
 import products from "../assets/products"
+import { Dimensions } from 'react-native'
 
-const RecommendItem = ({data, type }) => {
+const RecommendItem = ({data, type, style, setProduct }) => {
 
     const navigation = useNavigation();
 
-    console.log("recommend: ", data, type)
+    const {width} = Dimensions.get("screen");
 
     let isProduct = type == 'product'
 
-    let customSize = isProduct ? {height: 250, width: 175} : {height: 105, width: 250}
+    let customSize = isProduct ? {height: 250, width: width/2-30} : {height: 105, width: width-80}
 
     
     const handleClick = () =>{ 
@@ -23,10 +24,15 @@ const RecommendItem = ({data, type }) => {
             navigation.navigate("ListProducts", {groceryid: data.id});
         }
     }
+
+    const onPressHandler = () => {
+        console.log(data)
+        setProduct(data);
+    }
     
     
     return (
-        <TouchableOpacity onPress= {handleClick} style={isProduct? {...styles.productContainer,...customSize}: {...styles.container,...customSize, backgroundColor: data.backgroundColor.replaceAll(" ", ""), borderColor: data.borderColor.replaceAll(" ", ""), borderWidth: 1 }}>
+        <TouchableOpacity onPress= {handleClick} style={isProduct? {...styles.productContainer,...customSize,...style}: {...styles.container,...customSize, backgroundColor: data.backgroundColor.replaceAll(" ", ""), borderColor: data.borderColor.replaceAll(" ", ""), borderWidth: 1 , ...style}}>
             <View style={isProduct ? styles.imgProductContainer: styles.imgContainer}>
                 <Image  style= {styles.image} source={type == "grocery" ? groceries[data.image] : products[data.thumbnail]} />
             </View>
@@ -37,7 +43,7 @@ const RecommendItem = ({data, type }) => {
             {isProduct && 
                 <View style={styles.footer}>
                     <Text style={styles.price}>${data.productPrice}</Text>
-                    <CustomButton type="square" text="+" onPressHandler = {()=>{}} />
+                    <CustomButton type="square" text="+" onPressHandler = {onPressHandler} />
                 </View>
             }
         </TouchableOpacity>
@@ -55,7 +61,7 @@ const styles = StyleSheet.create({
         paddingBottom: 16,
         paddingLeft: 16,
         paddingRight: 16,
-        marginRight: 20,
+        marginBottom: 20
 
     },
     container: {

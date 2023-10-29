@@ -37,7 +37,6 @@ export default function SearchBar({style, placeholder, searchValue = "", setSear
                 onChangeText={handleOnChange}
                 onSubmitEditing = {
                     (e)=>{
-                        console.log()
                         submitEditingHandler(); 
                         submitHandler(e);
                     }}
