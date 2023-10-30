@@ -18,6 +18,7 @@ const RecommendItem = ({data, type, style, setProduct }) => {
 
     
     const handleClick = () =>{ 
+        console.log("item: ", data)
         if(isProduct){
             navigation.navigate("ProductDetails", {data});
         } else {
@@ -27,7 +28,7 @@ const RecommendItem = ({data, type, style, setProduct }) => {
 
     const onPressHandler = () => {
         console.log(data)
-        setProduct(data);
+        setProduct({...data, buyQuantity: 1});
     }
     
     
@@ -38,7 +39,7 @@ const RecommendItem = ({data, type, style, setProduct }) => {
             </View>
             <View style={ isProduct?styles.productContent:styles.content}>
                 <Text style={isProduct ? styles.name : {fontWeight: "bold", fontSize: 21, color: "#3E423F"}}>{data.productName || data.name}</Text>
-                {isProduct &&<Text style={styles.unit}>{data.unit}, Price</Text>}
+                {isProduct && <><Text style={styles.unit}>{data.unit}, Price</Text><Text style={styles.unit}>Sale qtty: {data.productQuantity}</Text></>}
             </View>
             {isProduct && 
                 <View style={styles.footer}>
@@ -100,7 +101,7 @@ const styles = StyleSheet.create({
         fontSize: 14
     },
     unit: {
-        fontSize: 10,
+        fontSize: 9,
         color: "#7C7C7C"
     },
     footer: {
@@ -111,6 +112,6 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     price: {
-        fontWeight: "bold"
+        fontWeight: "bold",
     }
 })

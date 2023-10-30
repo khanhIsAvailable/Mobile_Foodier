@@ -6,38 +6,59 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faX } from '@fortawesome/free-solid-svg-icons'
 import { TouchableOpacity } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
+import productImages from "../assets/products"
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import api from '../api'
 
-export default function CartItem() {
+export default function CartItem({data}) {
 
     const navigation = useNavigation();
     
     const handleClick = () =>{ 
-        navigation.navigate("ProductDetails", {data: {"id": 1, "name": "Organic Bananas", "price": 4.99, "src": 7, "unit": "7pcs"}});
+        AsyncStorage.getItem("Token").then(token=>{
+            fetch(`${api.getProduct}?productID=${data.productId}`,
+                {
+                  method: "GET",
+                  headers: {
+                    'Authorization': `Bearer ${token}`
+                  }
+                })
+                .then(response => response.json())
+                .then(res =>{
+                    console.log(res[0])
+                    navigation.navigate("ProductDetails", {data: res[0]});
+                })
+                .catch(error=>{
+                    console.log(error)
+                })
+        })
+        // navigation.navigate("ProductDetails", {data});
     }
 
+    console.log("CARTITEM: ", data)
 
     return (
         <TouchableOpacity onPress={handleClick} style={styles.container}>
             <View style={styles.thumbContainer}>  
-                <Image style={styles.thumb} source={{uri: "https://dtgxwmigmg3gc.cloudfront.net/imagery/assets/derivations/icon/512/512/true/eyJpZCI6ImI3MGVhMjE5OTVhMjM4NDI3NGQyMDZjNzdlMWE2ZDUwLmpwZyIsInN0b3JhZ2UiOiJwdWJsaWNfc3RvcmUifQ?signature=d29694b57bc143901690b2e0c2da4867c47bf4cb2fb73eefd4f749d09ca1e8fc"}} />
+                <Image style={styles.thumb} source={productImages[data.thumbnail]} />
             </View>
             <View style={styles.descriptionContainer}>
                 <View>
-                    <Text>Bell Peper Red</Text>
-                    <Text>1kg, Price</Text>
+                    <Text>{data.productName}</Text>
+                    <Text>{data.unit}, Price</Text>
                 </View>
                 <View >
                     <View style={styles.addbuttons}>
-                        <CustomButton type="addbutton" text="-" onPressHandler = {()=>{}} />
+                        {/* <CustomButton type="addbutton" text="-" onPressHandler = {()=>{}} /> */}
                         
                         <View style={{paddingLeft: 5, paddingRight: 5, borderBottomWidth: 1, borderColor: 'black', height: 35, display: 'flex', justifyContent: 'center'}}>
-                            <Text style={{fontSize: 16, }}>1</Text>
+                            <Text style={{fontSize: 16, }}>Qtty: {data.quantity}</Text>
                         </View>
                         
-                        <CustomButton type="addbutton" text="+" onPressHandler = {()=>{}} />
+                        {/* <CustomButton type="addbutton" text="+" onPressHandler = {()=>{}} /> */}
                     </View>
                     <View style={styles.price}>
-                        <Text style={{fontWeight: 'bold', fontSize: 13, letterSpacing: 1, paddingRight: 10}}>$4.99</Text>
+                        <Text style={{fontWeight: 'bold', fontSize: 13, letterSpacing: 1, paddingRight: 10}}>${data.price}</Text>
                     </View>
                 </View>
                 <TouchableOpacity style={styles.closebtn}>
@@ -69,7 +90,7 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
         borderBottomWidth: 1,
         borderColor: "#e7e7e7",
-        backgroundColor: "white"
+        backgroundColor: "white",
     },
     descriptionContainer: {
         flex: 0.75,
@@ -83,8 +104,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     thumb: {
-        width: 68,
-        height: 68,
+        maxWidth: "100%",
+        objectFit: "contain",
+        height: "100%",
     },
     addbuttons: {
         paddingVertical: 6,

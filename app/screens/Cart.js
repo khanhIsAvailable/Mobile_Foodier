@@ -1,12 +1,85 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { FlatList, ScrollView } from 'react-native-gesture-handler'
 import CartItem from '../components/CartItem'
 import FooterButton from '../components/FooterButton';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from '../api';
+import { RefreshControl } from 'react-native';
+import { ActivityIndicator } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+
+
+
 
 export default function Cart() {
 
-    var data = [{id: 1}, {id: 2}, {id: 3},{id: 4},{id: 5},{id: 6},{id: 7}];
+    const navigation = useNavigation();
+    const [data, setData] = useState([])
+    const [refreshing, setRefreshing] = useState(true)
+
+    const onRefresh = () => {
+        //Clear old data of the list
+        setData([]);
+        //Call the Service to get the latest data
+        AsyncStorage.getItem("Token").then(token=>{
+
+            AsyncStorage.getItem("UserId").then(userId=>{
+
+                fetch(api.getCartItem + `?userId=${userId}&deliverred=false`, {
+                    method: "GET",
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                      }
+            })
+                .then(response=>response.json())
+                .then(responseJson=>{
+                    setData(responseJson)
+                    setRefreshing(false)
+                })
+                .catch(error=>{
+                    console.log(error)
+                })
+
+            })
+
+        })
+        
+      };
+
+    useEffect(()=>{
+
+        AsyncStorage.getItem("Token").then(token=>{
+
+            AsyncStorage.getItem("UserId").then(userId=>{
+
+                fetch(api.getCartItem + `?userId=${userId}`, {
+                    method: "GET",
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                      }
+            })
+                .then(response=>response.json())
+                .then(responseJson=>{
+                    setData(responseJson)
+                    setRefreshing(false)
+                })
+                .catch(error=>{
+                    console.log(error)
+                })
+
+            })
+
+        })
+
+    }, [])
+
+
+    const checkOutHandler = () =>{
+        navigation.navigate("CheckOut", {data})
+        onRefresh()
+    }
+
 
     return (
     <View style={{backgroundColor: "white", flex: 1, display: "flex", flexDirection: 'column'}} contentContainerStyle={{flexGrow: 1, paddingBottom: 100}}>
@@ -15,20 +88,32 @@ export default function Cart() {
         </View>
 
         <View style={{paddingBottom: 200}}>
+            {refreshing && <ActivityIndicator />}
             <FlatList
-                data = {data} 
-                style = {{paddingHorizontal: 25, }}
-                renderItem={({item, id})=> (<CartItem data= {item} key={id}  />)}
+                data = {data.cartItems} 
+                style = {{paddingHorizontal: 25,minHeight: 100}}
+                renderItem={({item, id}) => 
+                    (
+                        <CartItem data= {item} key={id}  />
+                    )
+                }
                 snapToAlignment = "start"
+                refreshControl={
+                    <RefreshControl
+                        //refresh control used for the Pull to Refresh
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                    />
+                  }
             />
         </View>
 
         <View style={styles.footer}>
             <View style={{display: "flex", flexDirection: 'row', width: "100%", justifyContent: 'flex-end', paddingVertical: 6, paddingHorizontal: 45}}>
                 <Text style={{fontWeight: "bold", paddingRight: 20, fontSize: 10}}>TOTAL: </Text>
-                <Text style={{fontWeight: 'bold', fontSize: 12, letterSpacing: 1, color: '#53B175'}}>$100.59</Text>
+                <Text style={{fontWeight: 'bold', fontSize: 12, letterSpacing: 1, color: '#53B175'}}>${data.total}</Text>
             </View>
-            <FooterButton text="Check Out" />
+            <FooterButton onPressHandler = {checkOutHandler} text="Check Out" />
         </View>
     </View>
     )

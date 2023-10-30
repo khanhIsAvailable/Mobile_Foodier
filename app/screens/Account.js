@@ -1,10 +1,11 @@
-import { StyleSheet, Text, View, Image } from 'react-native'
-import React from 'react'
+import { StyleSheet, Text, View, Image, Platform } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { ScrollView } from 'react-native-gesture-handler'
 import FooterButton from '../components/FooterButton'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faChevronRight, faBagShopping, faAddressCard, faLocationDot, faCreditCard, faTicket, faBell, faCircleQuestion, faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 import { TouchableOpacity } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 
 
@@ -24,9 +25,11 @@ function AccountOptionItem({item}){
     )
 }
 
-export default function Account() {
+export default function Account({route, navigation}) {
 
+    const {setIsSignIn} = route.params
     const portraitWidth = 100
+    const [username, setUsername] = useState("")
 
     var options = [
         {icon: faBagShopping, text: "Orders"},
@@ -39,6 +42,37 @@ export default function Account() {
         {icon: faCircleInfo, text: "About"},
     ]
 
+    useEffect(()=>{
+        AsyncStorage.getItem("Username").then((e)=>{
+            setUsername(e)
+        })
+    }, [])
+
+
+    function LogoutHandler()
+    {
+        console.log(setIsSignIn)
+
+        AsyncStorage.getAllKeys().then((asyncStorageKeys)=>{
+            setIsSignIn(false)
+            if (asyncStorageKeys.length > 0) {
+                if (Platform.OS === 'android') {
+                    AsyncStorage.clear().then(()=>{
+                        navigation.navigate("Login")
+                    });
+                }
+                else if (Platform.OS === 'ios') {
+                    AsyncStorage.multiRemove(asyncStorageKeys).then(()=>{
+                        
+                        navigation.navigate("Login")
+                    });
+                }
+            }
+        })
+            
+
+    }
+
     return (
         <View style={styles.container}>
             <ScrollView contentContainerStyle={{flexGrow: 1, paddingBottom: 100}}>
@@ -47,8 +81,8 @@ export default function Account() {
                         <Image style={{width: (portraitWidth-4) , height: (portraitWidth-4), borderRadius: (portraitWidth-4)/2}} source={{uri: "https://icons.iconarchive.com/icons/microsoft/fluentui-emoji-3d/512/Person-Red-Hair-3d-Default-icon.png"}} />
                     </View>
                     <View style={{paddingHorizontal: 20, alignSelf: 'center'}}>
-                        <Text style={{fontSize: 18}}>Name Name Name</Text>
-                        <Text style={{fontSize: 12, color: "#7C7C7C"}}>EmailEmail@gmail.com</Text>
+                        <Text style={{fontSize: 18}}>{username}</Text>
+                        {/* <Text style={{fontSize: 12, color: "#7C7C7C"}}>EmailEmail@gmail.com</Text> */}
                     </View>
                 </View>
 
@@ -57,7 +91,7 @@ export default function Account() {
             </ScrollView>
 
             <View style={styles.footer}>
-                <FooterButton text="Log Out" />
+                <FooterButton onPressHandler={LogoutHandler} text="Log Out" />
             </View>
         </View>
     )

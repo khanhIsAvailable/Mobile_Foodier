@@ -4,6 +4,7 @@ import Grid from '../components/Grid'
 import { FlatList } from 'react-native-gesture-handler'
 import SearchBar from '../components/SearchBar'
 import api from '../api'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function Explore({navigation, route}) {
 
@@ -16,12 +17,19 @@ export default function Explore({navigation, route}) {
     }
 
     useEffect(function(){
-        fetch(api.getGrocery)
-            .then(response=>response.json())
-            .then(responseJson => { setGroceries(responseJson) })
-            .catch(error=>{
-                console.log(error)
+        AsyncStorage.getItem("Token").then(token=>{
+            fetch(api.getGrocery, {
+                method: "GET",
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             })
+                .then(response=>response.json())
+                .then(responseJson => { setGroceries(responseJson) })
+                .catch(error=>{
+                    console.log(error)
+                })
+        })
     }, [])
 
     return (

@@ -4,8 +4,9 @@ import RecommendItem from './RecommendItem'
 import { useNavigation } from '@react-navigation/native'
 
 const RecommendSlider = ({title, data, type="product", setProduct = ()=>{}}) => {
+  const navigation = useNavigation()
   const seeallOnPressHandler = () =>{
-    var navigate = useNavigation();
+    navigation.navigate("ListProducts", {specialId: data[0].specialId});
   }
   return (
     <View style={styles.container}>

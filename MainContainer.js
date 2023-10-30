@@ -8,6 +8,7 @@ import { faCartShopping, faHeart, faList, faShop, faUser } from '@fortawesome/fr
 import Cart from './app/screens/Cart'
 import Account from './app/screens/Account'
 import Explore from './app/screens/Explore'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 const Tab = createBottomTabNavigator()
 
 const TabItemName = {
@@ -19,10 +20,8 @@ const TabItemName = {
     ProductDetails: "ProductDetails"
 }
 
-
-const MainContainer = () => {
-
-  
+const MainContainer = ({route}) => {
+  const {setIsSignIn} = route.params
   return (
         <Tab.Navigator 
             initialRouteName= {TabItemName.Shop}
@@ -62,7 +61,7 @@ const MainContainer = () => {
             <Tab.Screen name={TabItemName.Shop} component={Shop} />
             <Tab.Screen name={TabItemName.Explore} component={Explore} />
             <Tab.Screen name={TabItemName.Cart} component={Cart} />
-            <Tab.Screen name={TabItemName.Account} component={Account} />
+            <Tab.Screen name={TabItemName.Account} initialParams={{setIsSignIn}} component={Account} />
         </Tab.Navigator>
   )
 }

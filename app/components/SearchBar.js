@@ -22,7 +22,7 @@ export default function SearchBar({style, placeholder, searchValue = "", setSear
     }
 
     const submitEditingHandler = () =>{
-        console.log("localSearchValue: ", localSearchValue)
+        
     }
 
 

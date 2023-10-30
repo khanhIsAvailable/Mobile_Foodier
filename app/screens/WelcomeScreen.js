@@ -1,9 +1,15 @@
 import { ImageBackground, StyleSheet, Image, Text, View } from 'react-native'
 import React from 'react'
+import { useNavigation } from '@react-navigation/native'
+import { TouchableOpacity } from 'react-native-gesture-handler'
 
 export default function WelcomeScreen() {
 
-    const handlePress = () =>{  }
+    const navigation = useNavigation()
+
+    const handlePress = () =>{ 
+        navigation.navigate("Login")
+     }
 
     return (
         <ImageBackground 
@@ -21,7 +27,9 @@ export default function WelcomeScreen() {
 
                     <Text style={styles.subtext}>Get your groceries in as fast as one hour</Text>
 
-                    <Text onPress={handlePress} style = {styles.button}>Get Started</Text>
+                    <TouchableOpacity onPress={handlePress} style={styles.button}>
+                        <Text style={{color: "white", letterSpacing: 1}}>Get Started</Text>
+                    </TouchableOpacity>
 
                 </View>
 
@@ -44,16 +52,15 @@ const styles = StyleSheet.create({
         marginHorizontal: "10%"
     },
     button: {
-        height: 44,
-        lineHeight: 44,
         color: "#fff",
         backgroundColor: "#53B175",
-        paddingHorizontal: 12,
+        paddingHorizontal: 50,
         width: "100%",
         marginTop: 12,
         borderRadius: 12,
+        paddingVertical: 16,
         textAlign: 'center',
-        fontWeight: 'bold'
+        fontWeight: 'bold',
     },
     textHeader: {
         color: '#fff',
@@ -67,8 +74,8 @@ const styles = StyleSheet.create({
         
     },
     logo: {
-        width: 30,
-        height: 30,
+        width: 28,
+        height: 32,
         marginVertical: 10
       },
 })

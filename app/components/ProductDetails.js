@@ -5,9 +5,12 @@ import Pagination from './Pagination'
 import CustomButton from './CustomButton'
 import FooterButton from './FooterButton'
 import api from '../api'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import Toast from 'react-native-toast-message'
 
 const ProductDetails = (props) => {
     const {data} = {...props.route.params}
+    const [buyQuantity, setBuyQuantity] = useState(1)
     var [productImage, setProductImage] = useState([])
 
     // const [index, setIndex] = useState(0);
@@ -42,7 +45,13 @@ const ProductDetails = (props) => {
 
 
     useEffect(function(){
-        fetch(api.getProductImage + "?productid="+data.productID)
+        AsyncStorage.getItem("Token").then(token=>{
+            fetch(api.getProductImage + "?productid="+data.productID, {
+                method: "GET",
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
                 .then(response => response.json())
                 .then(responseJSON =>{
                     setProductImage(responseJSON);
@@ -50,9 +59,62 @@ const ProductDetails = (props) => {
                 .catch(error => {
                     console.log(error)
                 })
+        })
     },[])
 
     const {width} = Dimensions.get("screen")
+
+
+    const minusHandler = () => {
+        if(buyQuantity <= 1 ){
+            
+        }else {
+            setBuyQuantity(buyQuantity-1)
+        }
+    }
+    const plusHandler = () => {
+        if(data.productQuantity <= buyQuantity){
+            
+        }else {
+            setBuyQuantity(buyQuantity+1)
+        }
+    }
+
+    const addtoblk = () =>{
+        AsyncStorage.getItem("Token").then(token=>{
+            AsyncStorage.getItem("UserId").then(userId=>{
+              fetch(`${api.addToCart}?userid=${userId}&productid=${data.productID}&quantity=${buyQuantity}&note=`,
+                {
+                  method: "POST",
+                  headers: {
+                    'Authorization': `Bearer ${token}`
+                  }
+                })
+                  .then(response => response.json())
+                  .then(res =>{
+                      if(res.returnCode == 0){
+                        Toast.show({
+                          type: 'AddToCartSuccess',
+                          text1: 'Thank you',
+                          text2: `${data.productName}(${buyQuantity} x ${data.unit}) Added To Basket`
+                        });
+                        
+                      } else {
+                        Toast.show({
+                          type: 'error',
+                          text1: 'Error',
+                          text2: `An error occurs`
+                        });
+                      }
+                  })
+                  .catch(error => {
+                      console.log(error)
+                  })
+                 
+            })
+          })
+    }
+
 
     return (
         <View style={{backgroundColor: "white", flex: 1, flexDirection: 'column'}} contentContainerStyle={{flexGrow: 1, paddingBottom: 100}}>
@@ -77,17 +139,21 @@ const ProductDetails = (props) => {
                     <View style = {styles.description}>
                         <Text style = {{fontSize: 25, fontWeight: 'bold'}}>{data.productName}</Text>
                         <Text style =  {{color:  "#7C7C7C"}}>{data.unit}, Price</Text>
+                        <Text style =  {{color:  "#7C7C7C"}}>Sale quantity: {data.productQuantity}</Text>
                     </View>
 
                     <View style={styles.buttoncontainer}>
                         <View style={styles.addbuttons}>
-                            <CustomButton type="addbutton" text="-" onPressHandler = {()=>{}} />
+                            <CustomButton type="addbutton" text="-" onPressHandler = {minusHandler} />
                             
                             <View style={{paddingLeft: 5, paddingRight: 5, borderBottomWidth: 1, borderColor: 'black', height: 35, display: 'flex', justifyContent: 'center'}}>
-                                <Text style={{fontSize: 16, }}>1</Text>
+                                <Text style={{fontSize: 16, }}>{buyQuantity}</Text>
                             </View>
                             
-                            <CustomButton type="addbutton" text="+" onPressHandler = {()=>{}} />
+                            <CustomButton type="addbutton" text="+" onPressHandler = {plusHandler} />
+                        </View>
+                        <View>
+                            {data.productQuantity <= buyQuantity && <Text style={{color: "red", paddingTop: 10}}>Not to be exceed quantity for sale</Text>}
                         </View>
                         <View style={styles.price}>                    
                             <Text style={{fontWeight: 'bold', fontSize: 20}}>${data.productPrice}</Text>
@@ -109,7 +175,7 @@ const ProductDetails = (props) => {
 
             </ScrollView>
             <View style={styles.footer}>
-                <FooterButton text="Add To Basket" />
+                <FooterButton onPressHandler = {addtoblk} text="Add To Basket" />
             </View>
         </View>
     )

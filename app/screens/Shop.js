@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, SafeAreaView } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, SafeAreaView, Modal, Pressable, Alert } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import ColorfulCarrot from '../components/ColorfulCarrot'
 import Location from  '../components/Location.js'
@@ -11,6 +11,8 @@ import ActionSheet from 'react-native-actions-sheet'
 import { Dimensions } from 'react-native'
 import CustomButton from '../components/CustomButton'
 import FooterButton from '../components/FooterButton'
+import Toast from 'react-native-toast-message'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function Shop({navigation}) {
   var location = "Ha Noi, Viet Nam"
@@ -29,39 +31,57 @@ export default function Shop({navigation}) {
 
   const [product, setProduct] = useState({})
 
-  // const navigation = useNavigation();
-
   const submitHandler = (e) => {
       navigation.navigate("ListProducts", {name: e.nativeEvent.text})
   }
 
 
   useEffect(function(){
-    fetch(api.getGrocery)
-            .then(response => response.json())
-            .then(responseJSON =>{
-                setGrocery(responseJSON);
-            })
-            .catch(error => {
-                console.log(error)
-            })
-
-    fetch(api.getExclusiveOffer)
-            .then(response => response.json())
-            .then(responseJSON =>{
-                setExclusiveOffer(responseJSON);
-            })
-            .catch(error => {
-                console.log(error)
-            })
-    fetch(api.getBestSelling)
-            .then(response => response.json())
-            .then(responseJSON =>{
-                setBestSelling(responseJSON);
-            })
-            .catch(error => {
-                console.log(error)
-            })
+    AsyncStorage.getItem("Token").then(token=>{
+      fetch(api.getGrocery, 
+        {
+          method: "GET",
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+              .then(response => response.json())
+              .then(responseJSON =>{
+                  setGrocery(responseJSON);
+              })
+              .catch(error => {
+                  console.log(error)
+              })
+  
+      fetch(api.getExclusiveOffer, 
+        {
+          method: "GET",
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+              .then(response => response.json())
+              .then(responseJSON =>{
+                  setExclusiveOffer(responseJSON);
+              })
+              .catch(error => {
+                  console.log(error)
+              })
+      fetch(api.getBestSelling, 
+        {
+          method: "GET",
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+              .then(response => response.json())
+              .then(responseJSON =>{
+                  setBestSelling(responseJSON);
+              })
+              .catch(error => {
+                  console.log(error)
+              })
+    })
 
   }, [])
 
@@ -69,7 +89,59 @@ export default function Shop({navigation}) {
     actionSheetRef.current?.show();
   else
     actionSheetRef.current?.hide();
-  console.log('rerender', product)
+
+  const addToCartHandler = () =>{
+    AsyncStorage.getItem("Token").then(token=>{
+      console.log(token)
+      AsyncStorage.getItem("UserId").then(userId=>{
+        fetch(`${api.addToCart}?userid=${userId}&productid=${product.productID}&quantity=${product.buyQuantity}&note=`,
+          {
+            method: "POST",
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          })
+            .then(response => response.json())
+            .then(res =>{
+              
+                if(res.returnCode == 0){
+                  Toast.show({
+                    type: 'AddToCartSuccess',
+                    text1: 'Thank you',
+                    text2: `${product.productName}(${product.buyQuantity} x ${product.unit}) Added To Basket`
+                  });
+                  
+                } else {
+                  Toast.show({
+                    type: 'error',
+                    text1: 'Error',
+                    text2: `An error occurs`
+                  });
+                }
+                setTimeout(()=>{actionSheetRef.current?.hide();},600)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+           
+      })
+    })
+  }
+
+  const minusPressHandler = () => {
+    if(product.buyQuantity <= 1)
+      actionSheetRef.current?.hide();
+    else 
+      setProduct({...product, buyQuantity: product.buyQuantity - 1})
+  }
+  const plusPressHandler = () => {
+    if(product.buyQuantity >= product.productQuantity)
+      {}
+    else 
+      setProduct({...product, buyQuantity: product.buyQuantity + 1})
+  }
+
+
   return (
     <SafeAreaView>
       <ActionSheet ref={actionSheetRef}>
@@ -89,27 +161,32 @@ export default function Shop({navigation}) {
             <View style ={{display: "flex", flexDirection: "row", alignItems: 'center'}}>
               <View><Text style={styles.text}>Quantity: </Text></View>
               <View style={styles.addbuttons}>
-                  <CustomButton type="addbutton" text="-" onPressHandler = {()=>{}} />
+                  <CustomButton type="addbutton" text="-" onPressHandler = {minusPressHandler} />
                   
                   <View style={{paddingLeft: 5, paddingRight: 5, borderBottomWidth: 1, borderColor: 'black', height: 35, display: 'flex', justifyContent: 'center'}}>
-                      <Text style={{fontSize: 16, }}>1</Text>
+                      <Text style={{fontSize: 16, }}>{product.buyQuantity}</Text>
                   </View>
                   
-                  <CustomButton type="addbutton" text="+" onPressHandler = {()=>{}} />
+                  <CustomButton type="addbutton" text="+" onPressHandler = {plusPressHandler} />
               </View>
+              {
+                product.buyQuantity >= product.productQuantity &&
+                <View style={{ width : 150, paddingHorizontal: 10}}>
+                  <Text style={{color: "red"}}>Not to be exceed quantity for sale</Text>
+                </View>
+
+              }
             </View>
 
           </View>
 
           <View style= {{width, height: 100, marginTop: 20, display: 'flex', alignItems: 'center'}}>
-            <FooterButton onPressHandler={()=>{console.log("add")}} text="Add To Cart" />
+            <FooterButton onPressHandler={addToCartHandler} text="Add To Cart" />
           </View>
 
 
         </View>
       </ActionSheet>
-      
-      
       
       <ScrollView>
         <View style={styles.container}>
@@ -119,7 +196,7 @@ export default function Shop({navigation}) {
               <Location location = {location}/>
           </View>
 
-          <SearchBar submitHandler = {submitHandler} placeholder = 'Search store, product,...'/>
+          <SearchBar submitHandler = {submitHandler} placeholder = 'Search product,...'/>
 
           <Banner images = {  images } />
 

@@ -11,7 +11,8 @@ import NotFound from './NotFound'
 
   
 
-export default function Grid({type, products = [], groceries = []}) {
+export default function Grid({type, products = [], groceries = [], setProduct = () => {}}) {
+
     var data = [...products, ...groceries]
     var Tag = type == 'product' ? RecommendItem : VerticalRetangleGrocery
 
@@ -29,7 +30,7 @@ export default function Grid({type, products = [], groceries = []}) {
             {
                 data.map((item,index)=>{
                     return (
-                        <Tag width={width} data={item} type = {type} key={index} />
+                        <Tag setProduct = {setProduct} width={width} data={item} type = {type} key={index} />
                     )
                 })
             }
